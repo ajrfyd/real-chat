@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import c from 'chalk';
 import mongoose from 'mongoose';
+import userRoute from './routes/userRoute.js';
 
 const { log } = console;
 const app = express();
@@ -25,7 +26,11 @@ const { PORT } = process.env;
 
 app.get('/', (req, res) => {
   res.send('hi??')
-})
+});
+
+userRoute.forEach(({ method, route, handler}) => {
+  app[method](route, handler);
+});
 
 app.listen(PORT, () => {
   log(c.cyan(`Server Listening on ${PORT}`));

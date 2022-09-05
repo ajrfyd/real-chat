@@ -78,6 +78,12 @@ const Register = () => {
     return true;
   };
 
+  useEffect(() => {
+    if(localStorage.getItem('userInfo')) {
+      navigate('/');
+    };
+  });
+
   return (
     <>
       <FormContainer>
@@ -196,3 +202,6 @@ const FormContainer = styled.div`
     }
   }
 `
+
+
+
