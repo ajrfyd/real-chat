@@ -31,7 +31,7 @@ const SetAvatar = () => {
     const data = [];
     for (let i = 0; i < 4; i++) {
       const image = await axios.get(
-        `${api}/${Math.round(Math.random() * 10)}`
+        `${api}/${i}`
       );
       const buffer = new Buffer(image.data);
       data.push(buffer.toString("base64"));
@@ -45,7 +45,6 @@ const SetAvatar = () => {
     getData();
   }, []);
 
-  console.log(avatars);
   return (
     <>
       <Container>
@@ -104,6 +103,7 @@ const Container = styled.div`
       justify-content: center;
       align-items: center;
       transition: 0.5s ease-in-out;
+
       img {
         height: 6rem;
         transition: 0.5s ease-in-out;
