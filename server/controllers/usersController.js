@@ -48,3 +48,37 @@ export const login = async (req, res, next) => {
     next(e)
   }
 }
+
+export const setAvatar = async (req, res, next) => {
+  try{
+    const { id: userId } = req.params;
+    const { image: avatarImage } = req.body;
+    const userData = await User.findByIdAndUpdate(userId, {
+      isAvatarImageSet: true,
+      avatarImage,
+    }, {
+      new: true
+    });
+    return res.json({
+      isSet: userData.isAvatarImageSet,
+      image: userData.avatarImage,
+    })
+  } catch(e) {
+    next(e);
+  }
+};
+
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const users = await User.find({ _id: { $ne: req.params.id } }).select([
+      'email',
+      'userName',
+      'avatarImage',
+      '_id'
+    ]);
+    
+    return res.json(users);
+  } catch(e) {
+    next(e);
+  }
+};

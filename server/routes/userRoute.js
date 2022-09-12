@@ -1,5 +1,5 @@
 const BASE = '/api/auth';
-import { login, register } from "../controllers/usersController.js";
+import { getAllUsers, login, register, setAvatar } from "../controllers/usersController.js";
 
 const userRoute = [
   {
@@ -11,6 +11,16 @@ const userRoute = [
     method: 'post',
     route: BASE + '/login',
     handler: (req, res) => login(req, res)
+  },
+  {
+    method: 'post',
+    route: BASE + '/setavatar/:id',
+    handler: (req, res, next) => setAvatar(req, res, next),
+  },
+  {
+    method: 'get',
+    route: BASE + '/allusers/:id',
+    handler: (req, res, next) => getAllUsers(req, res,next)
   }
 ]
 
