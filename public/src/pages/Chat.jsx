@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Contacts from "../components/Contacts";
+import Welcome from "../components/Welcome";
 import { allUsersRoute } from "../utils/APIRoutes";
 
 const Chat = () => {
@@ -18,6 +19,8 @@ const Chat = () => {
       }
     }
   );
+  const [currentChat, setCurrentChat] = useState(undefined);
+
 
 
   const getAvatarImg = async () => {
@@ -33,10 +36,15 @@ const Chat = () => {
     getAvatarImg();
   }, [currentUser])
 
+  const handleChatChange = (chat) => {
+    setCurrentChat(chat);
+  }
+
   return (
     <Container>
       <div className="container">
-        <Contacts contacts={contacts} currentUser={currentUser}/>
+        <Contacts contacts={contacts} currentUser={currentUser} changeChat={handleChatChange}/>
+        <Welcome currentUser={currentUser} />
       </div>
     </Container>
   )

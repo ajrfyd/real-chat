@@ -3,7 +3,7 @@ import styled from "styled-components";
 import Logo from '../assets/logo.svg';
 
 
-const Contacts = ({ contacts, currentUser }) => {
+const Contacts = ({ contacts, currentUser, changeChat }) => {
   const [currentUserName, setCurrentUserName] = useState(undefined);
   const [currentUserImage, setCurrentUserImage] = useState(undefined);
   const [currentSelected, setCurrentSelected] = useState(undefined);
@@ -13,7 +13,12 @@ const Contacts = ({ contacts, currentUser }) => {
       setCurrentUserName(currentUser.userName);
       setCurrentUserImage(currentUser.avatarImage);
     }
-  }, []);
+  }, [currentUser]);
+
+  const changeCurrentChat = (idx, contact) => {
+    setCurrentSelected(idx);
+    setCurrentUserName(contact)
+  };
 
   return (
     <>
@@ -28,7 +33,11 @@ const Contacts = ({ contacts, currentUser }) => {
               {
                 contacts.map((contact, idx) => {
                   return (
-                    <div className={`contact ${idx === currentSelected ? 'selected' : ''}`} key={idx}>
+                    <div 
+                      className={`contact ${idx === currentSelected ? 'selected' : ''}`} 
+                      key={contact._id}
+                      onClick={() => changeCurrentChat(idx, contact)}
+                    >
                       <div className="avatar">
                         <img 
                           src={`data:image/svg+xml;base64,${contact.avatarImage}`}
