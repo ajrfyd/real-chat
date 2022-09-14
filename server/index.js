@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import c from 'chalk';
 import mongoose from 'mongoose';
 import userRoute from './routes/userRoute.js';
+import { logger } from './middlewares/logger.js';
 
 const { log } = console;
 const app = express();
@@ -15,6 +16,7 @@ app.use(express.urlencoded({
   extended: true
 }));
 app.use(express.json());
+app.use(logger);
 
 mongoose.connect(process.env.MONGO_URL, {
   useNewUrlParser: true,
