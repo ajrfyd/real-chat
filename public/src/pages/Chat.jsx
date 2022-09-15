@@ -28,8 +28,8 @@ const Chat = () => {
 
   const getAvatarImg = async () => {
     if(currentUser && currentUser.isAvatarImageSet) {
-      const data = await axios.get(`${allUsersRoute}/${currentUser._id}`);
-      setContacts(data.data);
+      const { data } = await axios.get(`${allUsersRoute}/${currentUser._id}`);
+      setContacts(data);
     } else {
       navigate('/setavatar');
     }
@@ -42,7 +42,7 @@ const Chat = () => {
   const handleChatChange = (chat) => {
     setCurrentChat(chat);
   }
-
+  console.log(contacts);
   return (
     <Container>
       <div className="container">

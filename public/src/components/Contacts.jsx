@@ -17,7 +17,8 @@ const Contacts = ({ contacts, currentUser, changeChat }) => {
 
   const changeCurrentChat = (idx, contact) => {
     setCurrentSelected(idx);
-    setCurrentUserName(contact)
+    // setCurrentUserName(contact);
+    changeChat(contact)
   };
 
   return (
