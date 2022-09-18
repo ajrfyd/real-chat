@@ -4,7 +4,10 @@ import dotenv from 'dotenv';
 import c from 'chalk';
 import mongoose from 'mongoose';
 import userRoute from './routes/userRoute.js';
+import messagesRoute from './routes/messagesRoute.js';
 import { logger } from './middlewares/logger.js';
+import { Server } from 'socket.io';
+import http from 'http';
 
 const { log } = console;
 const app = express();
@@ -34,6 +37,39 @@ userRoute.forEach(({ method, route, handler}) => {
   app[method](route, handler);
 });
 
-app.listen(PORT, () => {
+messagesRoute.forEach(({ method, route, handler}) => {
+  app[method](route, handler);
+});
+
+// const server = http.createServer(app); 
+const server = app.listen(PORT, () => {
   log(c.cyan(`Server Listening on ${PORT}`));
 });
+
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:3000',
+    methods: ['GET', 'POST'],
+    credentials: true,
+  }
+});
+
+global.onlineUsers = new Map();
+
+io.on('connection', socket => {
+  global.chatSocket = socket;
+  socket.on('add-user', (userId) => {
+    onlineUsers.set(userId, socket.id);
+  });
+
+  socket.on('send-msg', (data) => {
+    const sendUserSocket = onlineUsers.get(data.to);
+    if(sendUserSocket) {
+      socket.to(sendUserSocket).emit('msg-recieve', data.message)
+    }
+  })
+});
+
+// server.listen(PORT, () => {
+//   log(c.red(`Server Listening on ${PORT}`));
+// });

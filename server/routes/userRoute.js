@@ -1,5 +1,5 @@
 const BASE = '/api/auth';
-import { getAllUsers, login, register, setAvatar } from "../controllers/usersController.js";
+import { getAllUsers, login, logOut, register, setAvatar } from "../controllers/usersController.js";
 
 const userRoute = [
   {
@@ -21,6 +21,11 @@ const userRoute = [
     method: 'get',
     route: BASE + '/allusers/:id',
     handler: (req, res, next) => getAllUsers(req, res,next)
+  },
+  {
+    method: 'get',
+    route: BASE + '/logout/:id',
+    handler: (req, res, next) => logOut(req, res, next)
   }
 ]
 

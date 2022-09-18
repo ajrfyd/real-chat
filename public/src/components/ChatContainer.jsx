@@ -1,8 +1,65 @@
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
+import LogOut from "./LogOut";
+import ChatInput from "./ChatInput";
+import axios from 'axios';
+import { sendMessageRoute, getMessagesRoute } from "../utils/APIRoutes";
+import { v4 as uuidv4 }  from 'uuid';
+
+const ChatContainer = ({ currentChat, currentUser, socket }) => {
+  const [messages, setMessages] = useState([]);
+  const [arrivalMsg, setArrivalMsg] = useState(null);
+  const scrollRef = useRef();
+
+  const getAllMsgs = async () => {
+    if(currentChat) {
+      const res = await axios.post(getMessagesRoute, {
+        from: currentUser._id,
+        to: currentChat._id
+      })
+      setMessages(res.data);
+    };
+  };
 
 
-const ChatContainer = ({ currentChat }) => {
+  const handleSendMsg = async (msg) => {
+    await axios.post(sendMessageRoute, {
+      from: currentUser._id,
+      to: currentChat._id,
+      message: msg
+    });
+    socket.current.emit('send-msg', {
+      to: currentChat._id,
+      from: currentUser._id,
+      message: msg
+    });
+
+    const msgs = [...messages];
+    msgs.push({ fromSelf: true, message: msg });
+    setMessages(msgs);
+  };
+
+  useEffect(() => {
+    getAllMsgs();
+  }, [currentChat]);
+
+  useEffect(() => {
+    if(socket.current) {
+      socket.current.on('msg-recieve', msg => {
+        setArrivalMsg({ fromSelf: false, message: msg });
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    arrivalMsg && setMessages(prev => [...prev, arrivalMsg]);
+
+  }, [arrivalMsg]);
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
   return (
     <>
       {
@@ -18,11 +75,22 @@ const ChatContainer = ({ currentChat }) => {
                   <h3>{currentChat.userName}</h3>
                 </div>
               </div>
+              <LogOut />  
             </div>
             <div className="chat-messages">
-
+              {
+                messages.map((msg, idx) => (
+                  <div key={uuidv4()} ref={scrollRef}>
+                    <div className={`message ${msg.fromSelf ? 'sended' : 'recieved'}`}>
+                      <div className="content">
+                        <p>{msg.message}</p>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              }
             </div>
-            <div className="chat-input"></div>
+            <ChatInput handleSendMsg={handleSendMsg}/>
           </Container>
         )
       }
